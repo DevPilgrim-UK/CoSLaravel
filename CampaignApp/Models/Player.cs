@@ -16,6 +16,5 @@ namespace CampaignApp.Models
         public int Level { get; set; }
         public string? Notes { get; set; }
 
-        public ICollection<PlayerQuest> PlayerQuests { get; set; }
     }
 }

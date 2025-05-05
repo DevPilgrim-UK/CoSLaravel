@@ -56,11 +56,13 @@ namespace CampaignApp.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -77,16 +79,23 @@ namespace CampaignApp.Migrations
 
                     b.Property<string>("Affinity")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.Property<bool>("HasMetParty")
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Met")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
 
                     b.ToTable("Npcs");
                 });
@@ -125,21 +134,6 @@ namespace CampaignApp.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("CampaignApp.Models.PlayerQuest", b =>
-                {
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlayerId", "QuestId");
-
-                    b.HasIndex("QuestId");
-
-                    b.ToTable("PlayerQuests");
-                });
-
             modelBuilder.Entity("CampaignApp.Models.Quest", b =>
                 {
                     b.Property<int>("Id")
@@ -152,42 +146,48 @@ namespace CampaignApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Difficulty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocationId");
+
                     b.ToTable("Quests");
                 });
 
-            modelBuilder.Entity("CampaignApp.Models.PlayerQuest", b =>
+            modelBuilder.Entity("CampaignApp.Models.Npc", b =>
                 {
-                    b.HasOne("CampaignApp.Models.Player", "Player")
-                        .WithMany("PlayerQuests")
-                        .HasForeignKey("PlayerId")
+                    b.HasOne("CampaignApp.Models.Location", null)
+                        .WithMany("Npcs")
+                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CampaignApp.Models.Quest", "Quest")
-                        .WithMany("PlayerQuests")
-                        .HasForeignKey("QuestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
-
-                    b.Navigation("Quest");
-                });
-
-            modelBuilder.Entity("CampaignApp.Models.Player", b =>
-                {
-                    b.Navigation("PlayerQuests");
                 });
 
             modelBuilder.Entity("CampaignApp.Models.Quest", b =>
                 {
-                    b.Navigation("PlayerQuests");
+                    b.HasOne("CampaignApp.Models.Location", "Location")
+                        .WithMany("Quests")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("CampaignApp.Models.Location", b =>
+                {
+                    b.Navigation("Npcs");
+
+                    b.Navigation("Quests");
                 });
 #pragma warning restore 612, 618
         }

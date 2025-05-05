@@ -1,96 +1,70 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CampaignApp.Data;
 using CampaignApp.Models;
-
+using Dapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using Microsoft.Extensions.Configuration;
 namespace CampaignApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class NpcController : ControllerBase
     {
-        private readonly CampaignAppDbContext _context;
+        private readonly string _connectionString;
 
-        public NpcController(CampaignAppDbContext context)
+        public NpcController(IConfiguration configuration)
         {
-            _context = context;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Npc>>> GetNpcs()
-        {
-            return await _context.Npcs.ToListAsync();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Npc>> GetNpc(int id)
-        {
-            var npc = await _context.Npcs.FindAsync(id);
-            if (npc == null)
-            {
-                return NotFound();
-            }
-
-            return npc;
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
         [HttpPost]
-        public async Task<ActionResult<Npc>> PostNpc(Npc npc)
+        public async Task<IActionResult> CreateNpc([FromBody] Npc npc)
         {
-            _context.Npcs.Add(npc);
-            await _context.SaveChangesAsync();
+            using var connection = new SqlConnection(_connectionString);
 
-            return CreatedAtAction(nameof(GetNpc), new { id = npc.Id }, npc);
+            var parameters = new
+            {
+                npc.Name,
+                npc.Affinity,
+                npc.Met,
+                npc.LocationId
+            };
+
+            await connection.ExecuteAsync("AddNpc", parameters, commandType: CommandType.StoredProcedure);
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Npc>>> GetAll()
+        {
+            using var conn = new SqlConnection(_connectionString);
+            var npcs = await conn.QueryAsync<Npc>("GetAllNpcs", commandType: CommandType.StoredProcedure);
+            return Ok(npcs);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Npc>> GetById(int id)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            var npc = await conn.QuerySingleOrDefaultAsync<Npc>("GetNpcById", new { Id = id }, commandType: CommandType.StoredProcedure);
+            return npc is null ? NotFound() : Ok(npc);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutNpc(int id, Npc npc)
+        public async Task<IActionResult> Update(int id, [FromBody] Npc npc)
         {
-            if (id != npc.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(npc).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NpcExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            npc.Id = id;
+            using var conn = new SqlConnection(_connectionString);
+            await conn.ExecuteAsync("UpdateNpc", npc, commandType: CommandType.StoredProcedure);
             return NoContent();
         }
 
-        // DELETE: api/Npc/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNpc(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var npc = await _context.Npcs.FindAsync(id);
-            if (npc == null)
-            {
-                return NotFound();
-            }
-
-            _context.Npcs.Remove(npc);
-            await _context.SaveChangesAsync();
-
+            using var conn = new SqlConnection(_connectionString);
+            await conn.ExecuteAsync("DeleteNpc", new { Id = id }, commandType: CommandType.StoredProcedure);
             return NoContent();
-        }
-
-        private bool NpcExists(int id)
-        {
-            return _context.Npcs.Any(e => e.Id == id);
         }
     }
 }
