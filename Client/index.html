@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curse of Strahd – DM Tool</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Modules</h2>
+      <nav>
+        <button onclick="showModule('players')">Players</button>
+        <button onclick="loadNPCs()">NPCs</button>
+        <button onclick="showModule('locations')">Locations</button>
+        <button onclick="showModule('quests')">Quests</button>
+      </nav>
+    </aside>
+
+    <section class="main-content">
+      <h1>NPCs</h1>
+      <div id="npc-list">
+        <!-- NPC Cards injected by JS -->
+      </div>
+    </section>
+
+    <aside class="info-panel">
+      <h2>General Info</h2>
+      <div id="info-content">
+        <p><strong>Strahd von Zarovich:</strong></p>
+        <p><strong>Attitude Towards Party:</strong>Hostile</p>
+        <p>A cunning and powerful vampire who rules over Barovia.</p>
+      </div>
+    </aside>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

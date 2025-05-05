@@ -11,5 +11,7 @@ namespace CampaignApp.Data
         public DbSet<Npc> Npcs { get; set; }
         public DbSet<Quest> Quests { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<Player> Players { get; set; }
+
     }
 }

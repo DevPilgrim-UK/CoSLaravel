@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    font-family: 'Garamond', serif;
+    background-color: #1a1a1a;
+    color: #f0e6dc;
+  }
+  
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #2a2a2a;
+    border-right: 2px solid #4b0000;
+    padding: 20px;
+  }
+  
+  .sidebar h2 {
+    color: #d4a373;
+    margin-bottom: 1rem;
+  }
+  
+  .sidebar nav button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    background-color: #4b0000;
+    border: none;
+    color: #f0e6dc;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .sidebar nav button:hover {
+    background-color: #700000;
+  }
+  
+  .load-btn {
+    margin-top: 20px;
+    background-color: #222;
+    border: 1px solid #d4a373;
+  }
+  
+  .main-content {
+    flex: 2;
+    padding: 30px;
+    background-color: #1c1c1c;
+    overflow-y: auto;
+  }
+  
+  .main-content h1 {
+    color: #d4a373;
+    margin-bottom: 20px;
+  }
+  
+  #npc-list .npc-card {
+    background-color: #2e1e1e;
+    border: 1px solid #8a2c2c;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px #330000;
+  }
+  
+  .npc-card h3 {
+    color: #f8e3d1;
+    margin: 0 0 5px;
+  }
+  
+  .info-panel {
+    width: 250px;
+    background-color: #2c2c2c;
+    border-left: 2px solid #4b0000;
+    padding: 20px;
+  }
+  
+  .info-panel h2 {
+    color: #d4a373;
+    margin-bottom: 1rem;
+  }
+  
+  #info-content p {
+    margin-bottom: 10px;
+  }
+  
